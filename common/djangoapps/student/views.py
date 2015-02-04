@@ -67,7 +67,7 @@ from xmodule.modulestore import ModuleStoreEnum
 
 from collections import namedtuple
 
-from courseware.courses import get_courses, sort_by_announcement
+from courseware.courses import get_courses, sort_by_announcement, get_course
 from courseware.access import has_access
 
 from django_comment_common.models import Role
@@ -100,6 +100,8 @@ from shoppingcart.models import CourseRegistrationCode
 
 import analytics
 from eventtracking import tracker
+
+from course_global.models import CourseGlobalSetting
 
 
 log = logging.getLogger("edx.student")
@@ -1563,6 +1565,9 @@ def create_account(request, post_override=None):  # pylint: disable-msg=too-many
             login_user.save()
             AUDIT_LOG.info(u"Login activated on extauth account - {0} ({1})".format(login_user.username, login_user.email))
 
+    # temporary enroll in global course.
+    _enroll_global_course(email)
+
     dog_stats_api.increment("common.student.account_created")
     redirect_url = try_change_enrollment(request)
 
@@ -1596,6 +1601,27 @@ def create_account(request, post_override=None):  # pylint: disable-msg=too-many
                         httponly=None)
     return response
 
+def _enroll_global_course(email):
+  """
+  Enroll in the global course for the user.
+
+  `email` E-mail addres of the user.
+  """
+  try:
+    for course_id in CourseGlobalSetting.all_course_id():
+      # check whether course exists.
+      try:
+        get_course(course_id)
+      except ValueError as e:
+        log.warning(e)
+        continue
+      cea, _ = CourseEnrollmentAllowed.objects.get_or_create(course_id=course_id, email=email)
+      cea.auto_enroll = True
+      cea.save()
+  except Exception as e:
+    # Exception will ignore and logged as warning. User management command to enroll global course later.
+    log.error('Failed to temporary enroll to global course.')
+    log.exception(e)
 
 def auto_auth(request):
     """
