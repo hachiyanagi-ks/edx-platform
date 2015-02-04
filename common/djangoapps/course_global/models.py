@@ -18,4 +18,10 @@ class CourseGlobalSetting(models.Model):
     for cgs in CourseGlobalSetting.objects.filter(global_enabled=True):
       yield cgs.course_id
 
+  def __unicode__(self):
+    not_global_en = "Not "
+    if self.global_enabled:
+      not_global_en = ""
+    return u"Course '{}': Global {}Enabled".format(self.course_id.to_deprecated_string(), not_global_en)
+
 
