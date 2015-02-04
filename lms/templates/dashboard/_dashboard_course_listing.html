@@ -1,4 +1,4 @@
-<%page args="course, enrollment, show_courseware_link, cert_status, show_email_settings, course_mode_info, show_refund_option, is_paid_course, is_course_blocked" />
+<%page args="course, enrollment, show_courseware_link, cert_status, show_email_settings, show_unenroll_settings, course_mode_info, show_refund_option, is_paid_course, is_course_blocked" />
 
 <%! from django.utils.translation import ugettext as _ %>
 <%!
@@ -156,6 +156,7 @@
         % endif
       % endif
 
+% if show_unenroll_settings:
       % if is_paid_course and show_refund_option:
         ## Translators: The course's name will be added to the end of this sentence.
         % if not is_course_blocked:
@@ -220,6 +221,7 @@
         </a>
         % endif
       % endif
+% endif
 
 % if show_email_settings:
         % if course.id.to_deprecated_string() in course_optouts_force:

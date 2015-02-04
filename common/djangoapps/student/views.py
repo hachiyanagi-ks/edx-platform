@@ -509,6 +509,14 @@ def dashboard(request):
         )
     )
 
+    # only show unenroll settings for not global course.
+    global_courses = CourseGlobalSetting.all_course_id()
+    show_unenroll_settings_for = frozenset(
+        course.id for course, _ in course_enrollment_pairs if (
+          course.id not in global_courses
+        )
+    )
+
     # Verification Attempts
     # Used to generate the "you must reverify for course x" banner
     verification_status, verification_msg = SoftwareSecurePhotoVerification.user_status(user)
@@ -572,6 +580,7 @@ def dashboard(request):
         'all_course_modes': course_modes,
         'cert_statuses': cert_statuses,
         'show_email_settings_for': show_email_settings_for,
+        'show_unenroll_settings_for': show_unenroll_settings_for,
         'reverifications': reverifications,
         'verification_status': verification_status,
         'verification_msg': verification_msg,
