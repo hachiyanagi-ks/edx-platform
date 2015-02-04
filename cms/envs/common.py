@@ -575,6 +575,9 @@ INSTALLED_APPS = (
 
     # Additional problem types
     'edx_jsme',    # Molecular Structure
+
+    # Course global setting
+    'course_global',
 )
 
 
