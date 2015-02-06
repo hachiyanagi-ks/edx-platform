@@ -11,12 +11,18 @@ class CourseGlobalSetting(models.Model):
   global_enabled = models.BooleanField(default=True)
 
   @classmethod
+  def all_global_settings(cls):
+      """
+      Returns all of available global settings.
+      """
+      return CourseGlobalSetting.objects.filter(global_enabled=True)
+
+  @classmethod
   def all_course_id(cls):
     """
     Returns all of available global course id.
     """
-    for cgs in CourseGlobalSetting.objects.filter(global_enabled=True):
-      yield cgs.course_id
+    return [global_setting.course_id for global_setting in cls.all_global_settings()]
 
   def __unicode__(self):
     not_global_en = "Not "
