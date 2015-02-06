@@ -19,6 +19,11 @@
           %else:
       <option value="all">${_("All (students, staff and instructors)")}</option>
       %endif
+        %if to_option == "all_include_optout":
+          <option value="all_include_optout" selected="selected">${_("All (students, staff and instructors, include opt-out)")}</option>
+        %else:
+          <option value="all_include_optout">${_("All (students, staff and instructors, including opt-out)")}</option>
+        %endif
       </select>
     </li>
   <br/>

@@ -48,6 +48,9 @@ class SendEmail
           confirm_message = gettext("You are about to send an email titled '<%= subject %>' to yourself. Is this OK?")
         else if send_to == "staff"
           confirm_message = gettext("You are about to send an email titled '<%= subject %>' to everyone who is staff or instructor on this course. Is this OK?")
+        else if send_to == "all_include_optout"
+          confirm_message = gettext("You are about to send an email titled '<%= subject %>' to ALL (everyone who is enrolled in this course as student including the student you have opt-out, staff, or instructor). Is this OK?")
+          success_message = gettext("Your email was successfully queued for sending. Please note that for large classes, it may take up to an hour (or more, if other courses are simultaneously sending email) to send all emails.")
         else
           confirm_message = gettext("You are about to send an email titled '<%= subject %>' to ALL (everyone who is enrolled in this course as student, staff, or instructor). Is this OK?")
           success_message = gettext("Your email was successfully queued for sending. Please note that for large classes, it may take up to an hour (or more, if other courses are simultaneously sending email) to send all emails.")
