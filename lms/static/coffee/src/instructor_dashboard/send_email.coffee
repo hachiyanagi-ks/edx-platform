@@ -20,7 +20,9 @@ class SendEmail
     @$emailEditor = XBlock.initializeBlock($('.xblock-studio_view'));
     @$send_to = @$container.find("select[name='send_to']'")
     @$subject = @$container.find("input[name='subject']'")
+    @$checkbox_include_optout = @$container.find("input[name='include-optout']")
     @$btn_send = @$container.find("input[name='send']'")
+    @$optout_container = @$container.find(".optout-container")
     @$task_response = @$container.find(".request-response")
     @$request_response_error = @$container.find(".request-response-error")
     @$content_request_response_error = @$container.find(".content-request-response-error")
@@ -31,6 +33,14 @@ class SendEmail
     @$table_email_content_history = @$container.find(".content-history-email-table")
     @$email_content_table_inner = @$container.find(".content-history-table-inner")
     @$email_messages_wrapper = @$container.find(".email-messages-wrapper")
+
+    # attach select handlers
+    @$send_to.change =>
+      if @$send_to.val() is 'all'
+        @$optout_container.show()
+      else
+        @$checkbox_include_optout.attr('checked', false)
+        @$optout_container.hide()
 
     # attach click handlers
 
@@ -48,9 +58,6 @@ class SendEmail
           confirm_message = gettext("You are about to send an email titled '<%= subject %>' to yourself. Is this OK?")
         else if send_to == "staff"
           confirm_message = gettext("You are about to send an email titled '<%= subject %>' to everyone who is staff or instructor on this course. Is this OK?")
-        else if send_to == "all_include_optout"
-          confirm_message = gettext("You are about to send an email titled '<%= subject %>' to ALL (everyone who is enrolled in this course as student including the student you have opt-out, staff, or instructor). Is this OK?")
-          success_message = gettext("Your email was successfully queued for sending. Please note that for large classes, it may take up to an hour (or more, if other courses are simultaneously sending email) to send all emails.")
         else
           confirm_message = gettext("You are about to send an email titled '<%= subject %>' to ALL (everyone who is enrolled in this course as student, staff, or instructor). Is this OK?")
           success_message = gettext("Your email was successfully queued for sending. Please note that for large classes, it may take up to an hour (or more, if other courses are simultaneously sending email) to send all emails.")
@@ -58,13 +65,21 @@ class SendEmail
         subject = @$subject.val()
         full_confirm_message = _.template(confirm_message, {subject: subject})
 
-        if confirm full_confirm_message
+        is_include_optout = @$checkbox_include_optout.is(':checked')
+
+        send_confirm = confirm full_confirm_message
+        # Do double-check if send to user who have opt-out.
+        if send_confirm and is_include_optout and not confirm gettext("Note! Do you really send to users who have opt-out?")
+          send_confirm = false
+
+        if send_confirm
 
           send_data =
             action: 'send'
             send_to: @$send_to.val()
             subject: @$subject.val()
             message: @$emailEditor.save()['data']
+            include_optout: is_include_optout
 
           $.ajax
             type: 'POST'

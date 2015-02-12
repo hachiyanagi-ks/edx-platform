@@ -61,6 +61,9 @@ class CourseEmail(Email):
     # * All: This sends an email to anyone enrolled in the course, with any role
     #   (student, staff, or instructor)
     #
+    # * All including opt-out: This sends an email to anyone enrolled in the course, with any role
+    #   (student, staff, or instructor) even if user have opt-out.
+    #
     TO_OPTION_CHOICES = (
         (SEND_TO_MYSELF, 'Myself'),
         (SEND_TO_STAFF, 'Staff and instructors'),

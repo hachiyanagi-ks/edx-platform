@@ -19,11 +19,6 @@
           %else:
       <option value="all">${_("All (students, staff and instructors)")}</option>
       %endif
-        %if to_option == "all_include_optout":
-          <option value="all_include_optout" selected="selected">${_("All (students, staff and instructors, include opt-out)")}</option>
-        %else:
-          <option value="all_include_optout">${_("All (students, staff and instructors, including opt-out)")}</option>
-        %endif
       </select>
     </li>
   <br/>
@@ -57,6 +52,22 @@
    <b>${_("A queued email CANNOT be cancelled.")}</b></p>
 </div>
  <br />
+ %if section_data['access']['admin']:
+  <div class="mail-option optout-container">
+    <input type="checkbox" name="include-optout" value="yes">
+    <label for="include-optout">${_("Include opt-out")}</label>
+    <div class="hint include-optout-hint">
+      <span class="hint-caret"></span>
+      <p>${_("If this option is <em>checked</em>, E-mail will also be sent to users who have opt-out.")}</p>
+    </div>
+  </div>
+  <div class="submit-email-warning optout-container">
+    <p class="copy"><span style="color: red;"><b>${_("CAUTION!")}</b></span>
+    ${_("If you checked 'Include opt-out', then your email will be sent to users who have opt-out.")}
+    <b>${_("Please check whether the contents suitable for send to the user who have opt-out.")}</b></p>
+  </div>
+ <br />
+  %endif
   <input type="button" name="send" value="${_("Send Email")}" data-endpoint="${ section_data['send_email'] }" >
   <div class="request-response-error"></div>
 
